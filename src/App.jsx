@@ -1,12 +1,14 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import MainLayout from "./components/MainLayout";
+
 import Home from "./pages/Home";
 import Chats from "./pages/Chats";
 import ChatRoom from "./pages/ChatRoom";
 import Explore from "./pages/Explore";
 import ProductDetail from "./pages/ProductDetail";
 import Profile from "./pages/Profile";
+import SplashScreen from "./pages/SplashScreen";
 import Login from "./pages/Login";
 
 function PrivateRoute({ children }) {
@@ -19,7 +21,13 @@ export default function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* Protected */}
+        {/* Splash ONLY ENTRY POINT */}
+        <Route path="/" element={<SplashScreen />} />
+
+        {/* Login */}
+        <Route path="/login" element={<Login />} />
+
+        {/* Protected Layout */}
         <Route
           element={
             <PrivateRoute>
@@ -27,16 +35,21 @@ export default function App() {
             </PrivateRoute>
           }
         >
-          <Route path="/" element={<Home />} />
-          <Route path="/chats" element={<Chats />} />
-          <Route path="/explore" element={<Explore />} />
-          <Route path="/Profile" element={<Profile />} />
+          {/* ✅ FIX: use index route instead of /home */}
+          <Route index element={<Home />} />
+          <Route path="chats" element={<Chats />} />
+          <Route path="explore" element={<Explore />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
 
-      <Route path="/" element={<Explore />} />
-      <Route path="/product/:id" element={<ProductDetail />} />
-      <Route path="/chat/:id" element={<ChatRoom />} />
-    </Routes>
+        {/* Extra routes */}
+        <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/chat/:id" element={<ChatRoom />} />
+
+        {/* IMPORTANT: avoid looping to splash */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+
+      </Routes>
     </BrowserRouter>
   );
 }
